@@ -1,6 +1,9 @@
 var express = require('express');
 var path = require('path');
 var fileUpload = require('express-fileupload');
+var s3Client = require('./s3');
+var fileManager = new s3Client();
+
 
 app = express();
 app.use(fileUpload());
@@ -13,15 +16,15 @@ app.post('/api/upload', function (req, res) {
 
 	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file 
 	var imageFile = req.files.imageFile;
+	fileManager.client(imageFile.name)
 
-	// Use the mv() method to place the file somewhere on your server 
-	imageFile.mv(path.join(__dirname + '/fileUpload/' + req.files.imageFile.name), function(err) {
-		if (err) {
-			return res.status(500).send(err);
-		}
+	// imageFile.mv(path.join(__dirname + '/fileUpload/' + req.files.imageFile.name), function(err) {
+	// 	if (err) {
+	// 		return res.status(500).send(err);
+	// 	}
 
-		res.send('File uploaded!');
-	});
+	// 	res.send('File uploaded!');
+	// });
 });
 
 app.get('/', function (req, res) {
