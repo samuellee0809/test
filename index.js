@@ -4,7 +4,6 @@ var fileUpload = require('express-fileupload');
 var s3Client = require('./s3');
 var fileManager = new s3Client();
 
-
 app = express();
 app.use(fileUpload());
 
@@ -14,17 +13,21 @@ app.post('/api/upload', function (req, res) {
 		return res.status(400).send('No files were uploaded.');
 	}
 
-	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file 
 	var imageFile = req.files.imageFile;
-	fileManager.client(imageFile.name)
+	fileManager.upload(imageFile, function (err, resObj) {
+		if (err) {
+			res.send(err);
+		}
 
-	// imageFile.mv(path.join(__dirname + '/fileUpload/' + req.files.imageFile.name), function(err) {
-	// 	if (err) {
-	// 		return res.status(500).send(err);
-	// 	}
+		res.json(resObj);
+	});
+});
 
-	// 	res.send('File uploaded!');
-	// });
+app.get('/api/read/:fileName', function (req, res) {
+	fileManager.readFile(req.params.fileName, function (err, resObj) {
+		res.setHeader('content-type', 'image/jpeg');
+		res.send(resObj);
+	});
 });
 
 app.get('/', function (req, res) {
