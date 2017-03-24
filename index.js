@@ -25,7 +25,7 @@ app.post('/api/upload', function (req, res) {
 
 app.get('/api/read/:fileName', function (req, res) {
 	fileManager.readFile(req.params.fileName, function (err, resObj) {
-		res.setHeader('content-type', 'image/jpeg');
+		res.setHeader('content-type', 'image');
 		res.send(resObj);
 	});
 });
